@@ -1,18 +1,23 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import Button from './Button';
 
-const Card = ({ title, content }) => {
+const Card = ({ id, title, content, image }) => {
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow-lg">
-      <img
-        className="w-full h-auto"
-        src="https://via.placeholder.com/150"
-        alt="Placeholder"
-      />
-      <div className="px-6 py-4">
-        <div className="font-bold text-xl mb-2">{title}</div>
-        <p className="text-gray-700 text-base">{content}</p>
+    <Link to={`/post/${id}`}>
+      <div className='max-w-sm rounded overflow-hidden shadow-lg mt-1 mb-1'>
+        <img className='w-32 h-32 object-cover' src={image} alt='joe' />
+        <div className='px-6 py-4'>
+          <div className='font-bold text-xl mb-2'>{title}</div>
+          {/* truncate content */}
+          <p className='text-gray-700 text-base'>{content.slice(0, 32)}</p>
+        </div>
+        <Button
+          text='read more'
+          onClick={() => null}
+        />
       </div>
-    </div>
+    </Link>
   );
 };
 

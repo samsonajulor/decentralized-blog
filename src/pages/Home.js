@@ -1,34 +1,23 @@
-import Button from "../components/Button";
-import CardList from "../components/CardLIsit";
-
-const handleClick = () => {
-    alert('Button clicked!');
-  };
-
-
-  const cards = [
-    {
-      title: 'Card 1',
-      content: 'Content for Card 1',
-    },
-    {
-      title: 'Card 2',
-      content: 'Content for Card 2',
-    },
-    {
-      title: 'Card 3',
-      content: 'Content for Card 3',
-    }
-  ];
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import usePosts from '../hooks/usePosts';
+import Button from '../components/Button';
+import CardList from '../components/CardList';
 
 const Home = () => {
-    return (
-        <>
-        
-        <Button text="Click me" onClick={handleClick} className="mt-4" />
-        <CardList cards={cards}/>
-        </>
-    )
-}
+  const navigate = useNavigate();
+  const posts = usePosts(0, 1);
+  console.log(posts, 'posts')
+
+  const handleRegister = () => {
+    navigate('/user/1');
+  };
+  return (
+    <div className='flex flex-col container mx-auto py-8 items-center justify-center'>
+      <Button text='Register' onClick={handleRegister} />
+      <CardList posts={posts} id={1} />
+    </div>
+  );
+};
 
 export default Home;
