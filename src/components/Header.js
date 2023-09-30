@@ -18,7 +18,7 @@ const Header = () => {
           <Logo address={'welcome'} />
           <Button
             text='Connect Wallet'
-            onClick={() => connect}
+            onClick={connect}
           />
         </div>
       </header>

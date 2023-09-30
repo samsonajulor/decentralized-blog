@@ -11,18 +11,17 @@ const CardList = ({ posts, id }) => {
   });
 
   const dataUri = avatar.toDataUriSync(); 
-  console.log(dataUri, 'dataUri')
 
   return (
     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
       {posts?.length > 0 ? (
         posts?.map((card, index) => (
           <Card
-            image={dataUri} // Generate a random avatar URL for each card
+            image={dataUri}
             key={index}
-            title={card.title}
+            title={card.poster}
             content={card.content}
-            id={id}
+            id={card.id}
           />
         ))
       ) : (

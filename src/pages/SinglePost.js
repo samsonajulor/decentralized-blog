@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import Content from '../components/Content';
+import { useParams } from 'react-router-dom';
 import UserDetailsModal from '../components/modals/UserDetailsModal';
 import ConfirmationModal from '../components/modals/ConfirmModal';
 import Icon from '../components/icons/Icons';
+import usePost from '../hooks/usePost';
 
 const user = {
   id: 1,
@@ -13,6 +15,11 @@ const user = {
 };
 
 const SinglePost = () => {
+  const { id } = useParams();
+  console.log(id, 'id')
+  const post = usePost(Number(id));
+
+  console.log(post, 'post');
   const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
 
   const handleDonateOpenModal = () => {
@@ -25,10 +32,9 @@ const SinglePost = () => {
 
   const [isUserDetailsModalOpen, setIsUserDetailsModalOpen] = useState(false);
 
-  const contentText = 'This is a single post';
   return (
     <>
-      <Content text={contentText} />
+      <Content text={post?.content || 'loading...'} />
       <div className='container mx-auto py-8 flex items-center justify-center'>
         <div className='mr-8'>
           <Icon onClick={() => setIsUserDetailsModalOpen(true)} text={'about me'} />

@@ -1,14 +1,25 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
+import { useConnection } from '../../context/connection';
+import useCreatePost from '../../hooks/useCreatePost';
 
 const CreatePostModal = ({ isOpen, onClose, onSubmit }) => {
+  const { isActive } = useConnection();
+  const createPost = useCreatePost();
   const [postContent, setPostContent] = useState('');
 
   const handleInputChange = (event) => {
     setPostContent(event.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     onSubmit(postContent);
+    if (!isActive) {
+      console.log(isActive, 'isActive');
+      return toast.info('please, connect');
+    }
+    await createPost(postContent);
+    toast.success("post created!!");
     setPostContent('');
   };
 
