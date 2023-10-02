@@ -5,22 +5,36 @@ import useCreatePost from '../../hooks/useCreatePost';
 
 const CreatePostModal = ({ isOpen, onClose, onSubmit }) => {
   const { isActive } = useConnection();
-  const createPost = useCreatePost();
   const [postContent, setPostContent] = useState('');
-
+  const [sendingTx, setSendingTx] = useState(false);
+  const createPost = useCreatePost();
+  
   const handleInputChange = (event) => {
     setPostContent(event.target.value);
   };
 
   const handleSubmit = async () => {
-    onSubmit(postContent);
+    onSubmit();
+    if (!postContent) return toast.info('Please provide all values');
     if (!isActive) {
       console.log(isActive, 'isActive');
       return toast.info('please, connect');
     }
-    await createPost(postContent);
-    toast.success("post created!!");
-    setPostContent('');
+    try {
+      const tx = await createPost(postContent);
+      const receipt = await tx.wait();
+      if (receipt.status === 0) return toast.error('tx failed');
+      toast.success('post created!!');
+    } catch (error) {
+      console.log('error: ', error);
+      if (error.info.error.code === 4001) {
+        return toast.error('You rejected the request');
+      }
+      toast.error('something went wrong');
+    } finally {
+      setSendingTx(false);
+      setPostContent('');
+    }
   };
 
   return (
@@ -49,7 +63,7 @@ const CreatePostModal = ({ isOpen, onClose, onSubmit }) => {
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
               onClick={handleSubmit}
             >
-              Submit
+              create post
             </button>
           </div>
         </div>
