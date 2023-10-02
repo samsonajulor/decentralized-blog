@@ -1,25 +1,50 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useConnection } from '../context/connection';
-import { getBlogContract } from '../utils';
+import {
+  calculateGasMargin,
+  getBlogContract, getMulticall2ContractWithProvider,
+  getBlogInterface
+} from '../utils';
+import { blogContractAddress } from '../constants/addresses';
 
 const usePost = (id) => {
+    const [post, setPost] = useState(null);
+    const [state, setState] = useState("LOADING");
   const { provider } = useConnection();
-  const [ post, setPost ] = useState();
 
-  useEffect(() => {
-    const fetchPost = async () => {
+  const fetchPost = useCallback(
+    async () => {
+      if (!id) return setState('NOT_FOUND');
       try {
-        const contract = await getBlogContract(provider, false);
-        const data = await contract.getPost(id);
-        setPost(data);
-      } catch (error) {
-        console.error('Error fetching post:', error);
-      }
-    };
+            const multicall2Contract = getMulticall2ContractWithProvider(provider);
 
-    fetchPost();
-  }, [id, provider, setPost]);
-  return post;
+            const croundFundInterface = getBlogInterface();
+
+            const calls = [
+              {
+                target: blogContractAddress,
+                callData: croundFundInterface.encodeFunctionData('getPost', [id]),
+              },
+            ];
+
+            const callsResult = (await multicall2Contract.aggregate.staticCall(calls))[1].toArray();
+
+            const postContent = croundFundInterface.decodeFunctionResult('getPost', callsResult[0]).toArray();
+
+            setPost(postContent);
+            setState('LOADED');
+      } catch (error) {
+            console.error('Error fetching campaigns:', error);
+            setState('NOT_FOUND');
+      }
+    },
+    [id, provider]);
+
+    useEffect(() => {
+        fetchPost();
+    }, [fetchPost, id, provider]);
+
+  return { post, state };
 };
 
 export default usePost;

@@ -17,7 +17,7 @@ const user = {
 const SinglePost = () => {
   const { id } = useParams();
   console.log(id, 'id')
-  const post = usePost(Number(id));
+  const { post, state } = usePost(id);
 
   console.log(post, 'post');
   const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
@@ -34,7 +34,7 @@ const SinglePost = () => {
 
   return (
     <>
-      <Content text={post?.content || 'loading...'} />
+      {state === 'LOADED' && <Content text={post[0]} />}
       <div className='container mx-auto py-8 flex items-center justify-center'>
         <div className='mr-8'>
           <Icon onClick={() => setIsUserDetailsModalOpen(true)} text={'about me'} />
@@ -45,7 +45,7 @@ const SinglePost = () => {
           />
         </div>
         <div>
-          <Icon onClick={handleDonateOpenModal} text={'donate'} />
+          <Icon onClick={handleDonateOpenModal} text={'tip me'} />
           <ConfirmationModal
             isOpen={isDonateModalOpen}
             onClose={() => setIsDonateModalOpen(false)}
